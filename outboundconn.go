@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/zhangpeihao/goamf"
 	"github.com/zhangpeihao/log"
+	"github.com/lucas-clemente/quic-go"
 	"net"
 	"time"
 )
@@ -79,6 +80,8 @@ func Dial(url string, handler OutboundConnHandler, maxChannelNumber int) (Outbou
 		c, err = net.Dial("tcp", fmt.Sprintf("%s:%d", rtmpURL.host, rtmpURL.port))
 	case "rtmps":
 		c, err = tls.Dial("tcp", fmt.Sprintf("%s:%d", rtmpURL.host, rtmpURL.port), &tls.Config{InsecureSkipVerify: true})
+	case "rtmpq":
+		c, err = quic.DialAddr(fmt.Sprintf("%s:%d", rtmpURL.host, rtmpURL.port), &tls.Config{InsecureSkipVerify: true}, nil)
 	default:
 		err = errors.New(fmt.Sprintf("Unsupport protocol %s", rtmpURL.protocol))
 	}
